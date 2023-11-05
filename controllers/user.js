@@ -21,19 +21,19 @@ const addUsers = async (req, res, next) => {
   console.log(req.body);
   try {
     if (result.isEmpty()) {
-      const { name, email, password } = req.body;
+      let { name, email, password } = req.body;
       const user = await User.findOne({ email });
       if (user) {
         customErr(409, "Exists", "This user already exists!");
       } else {
-        const password = await doEncrypt(password);
+        password = await doEncrypt(password);
         const user = await User.create({
           name,
           email,
           password,
           roles: [{ role: "Admin" }],
         });
-        return res.status(201).jsone({ data: user });
+        return res.status(201).json({ data: user });
       }
     } else {
       customErr(
