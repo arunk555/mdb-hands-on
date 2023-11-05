@@ -1,21 +1,13 @@
 const express = require("express");
+const { usersList, addUsers } = require("../controllers/user");
+const { body } = require("express-validator");
 userRouter = express.Router();
 
-userRouter
-  .route("/")
-  .get((req, res, next) => {
-    console.log("Hiaass " + req.method);
-    res.status(200).json({
-      headip: req.headers["x-forwarded-for"],
-      sockip: req.socket.remoteAddress,
-    });
-  })
-  .post((req, res, next) => {
-    console.log("Hi " + req.method);
-    res.status(200).json({
-      headip: req.headers["x-forwarded-for"],
-      sockip: req.socket.remoteAddress,
-    });
-  });
+const validate = [
+  body("name").notEmpty().withMessage("Name is mandatory field!"),
+  body("email").isEmail().withMessage("Not a valid e-mail address"),
+  body("password").isStrongPassword(),
+];
+userRouter.route("/").get(usersList).post(validate, addUsers);
 
 module.exports = userRouter;
